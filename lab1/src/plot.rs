@@ -11,8 +11,8 @@ pub fn plot_histogram (data: &Vec<(usize, usize)>, n: usize, u: Option<usize>, n
         };
     let file_name = 
         match u {
-            Some(u) => format!("../plots/histogram_n{}_u{}.png", n, u),
-            None => format!("../plots/histogram_n{}.png", n)
+            Some(u) => format!("plots/histogram_n{}_u{}.png", n, u),
+            None => format!("plots/histogram_n{}.png", n)
         };
 
     let root = BitMapBackend::new(&file_name, (4000, 2000)).into_drawing_area();
