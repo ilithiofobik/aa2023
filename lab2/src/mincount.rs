@@ -1,7 +1,9 @@
-pub fn mincount(m: &Vec<(usize, usize)>, h: fn(usize) -> f64, k: usize) -> f32 {
+use super::multiset::MultiSet;
+
+pub fn mincount(m: MultiSet, h: fn(usize, usize) -> f64, k: usize, b: usize) -> f32 {
     let mut m_arr = vec![1.0; k];
-    for &(x, _) in m {
-        let hx = h(x);
+    for x in m {
+        let hx = h(x, b);
         if hx < m_arr[k - 1] && !m_arr.contains(&hx) {
             m_arr[k - 1] = hx;
             m_arr.sort_by(|a, b| a.partial_cmp(b).unwrap());
