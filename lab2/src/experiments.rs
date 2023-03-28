@@ -1,6 +1,7 @@
 use super::mincount;
 use super::hashes;
 use super::multiset;
+use super::bounds_calc;
 
 use std::fs::File;
 use std::io::Write;
@@ -9,30 +10,26 @@ fn to_file_exp(filename: &str, k: usize, hash: fn(usize, usize) -> f64, ns: &[us
     let mut f = File::create(filename).unwrap();
     for &n in ns {
         let m = multiset::MultiSet::new(n);
-        let count = mincount::mincount(m, hash, k, 6);
+        let count = mincount::mincount(m, hash, k, b);
         let n = n as f32;
         writeln!(f, "{};{}", n, count as f32 / n).unwrap();
     }
 }
 
-fn k_experiment(k: usize, hash: fn(usize, usize) -> f64, ns: &[usize], b: usize) -> Vec<(f32, f32)> {
+#[allow(dead_code)]
+fn k_experiment(k: usize, hash: fn(usize, usize) -> f64, ns: &[usize], b: usize) -> Vec<(f64, f64)> {
     ns 
     .iter()
     .map(|&n| {
         let m = multiset::MultiSet::new(n);
         let count = mincount::mincount(m, hash, k, b);
-        let n = n as f32;
-        (n, count as f32 / n)
+        let n = n as f64;
+        (n, count as f64 / n)
     })
-    .collect::<Vec<(f32, f32)>>()
+    .collect::<Vec<(f64, f64)>>()
 }
 
-fn avg_diff_experiment(k: usize, hash: fn(usize, usize) -> f64, ns: &[usize], b: usize) -> f32 {
-    let results = k_experiment(k, hash, ns, b);
-    let sum = results.iter().map(|(_, diff)| (diff - 1.0).abs()).sum::<f32>();
-    sum / (ns.len() as f32)
-}
-
+#[allow(dead_code)]
 pub fn experiment5a() {
     println!("Running experiment 5a...");
 
@@ -51,6 +48,7 @@ pub fn experiment5a() {
     println!("Done running experiment 5a.")
 }
 
+#[allow(dead_code)]
 pub fn experiment5b(ns: &[usize]) {
     println!("Running experiment 5b...");
 
@@ -65,6 +63,7 @@ pub fn experiment5b(ns: &[usize]) {
     println!("Done running experiment 5b.")
 }
 
+#[allow(dead_code)]
 pub fn experiment5c(ns: &[usize], min_count: usize) {
     println!("Running experiment 5c...");
 
@@ -87,29 +86,47 @@ pub fn experiment5c(ns: &[usize], min_count: usize) {
     println!("Done running experiment 5c.")
 }
 
-// pub fn experiment6(ns: &[usize]) {
-//     println!("Running experiment 6...");
+#[allow(dead_code)]
+pub fn experiment6(ns: &[usize]) {
+    println!("Running experiment 6...");
 
-//     for k in ks {
-//         let filename = format!("data\\exp5b_k_{}.csv", k);
-//         let mut f = File::create(filename).unwrap();
-//         for &n in ns {
-//             let m = multiset::MultiSet::new(n);
-//             let count = mincount::mincount(m, hashes::blake2_hash, k, 6);
-//             let n = n as f32;
-//             writeln!(f, "{};{}", n, count as f32 / n).unwrap();
-//         }
-//         println!("Done running experiment for k = {}.", k)
-//     }
+    let bs = [1,2,4,6];
+    let hashes = [hashes::sha1_hash, hashes::blake2_hash, hashes::my_hash];
+    let hashes_names = ["sha1", "blake2", "my_hash"];
 
-//     let bytes_arr = [1, 2, 3, 4, 5, 6];
-//     for byte in bytes_arr {
-//         println!("Running experiment for b = {} bits...", 8 * byte);
-//         let sha1_avg_diff = avg_diff_experiment(400, hashes::sha1_hash, ns, byte);
-//         println!("sha1_avg_diff = {}", sha1_avg_diff);
-//         let blake2_avg_diff = avg_diff_experiment(400, hashes::blake2_hash, ns, byte);
-//         println!("blake2_avg_diff = {}", blake2_avg_diff);
-//     }
+    for (&hash, hash_name) in hashes.iter().zip(hashes_names.iter()) {
+        for &b in bs.iter() {
+            println!("Running experiment for b = {} bits for hash {}...", 8 * b, hash_name);
+            let filename = "data\\exp6_".to_string() + hash_name + &format!("_b_{}.csv", 8 * b);
+            to_file_exp(&filename, 400, hash, ns, b); 
+        }
+    }
 
-//     println!("Done running experiment 6.")
-// }
+    println!("Done running experiment 6.")
+}
+
+
+#[allow(dead_code)]
+pub fn experiment7(ns: &[usize]) {
+    println!("Running experiment 7...");
+
+    let exp = k_experiment(400, hashes::blake2_hash, ns, 6);
+
+    for alpha in [0.05, 0.01, 0.005] {
+        let chernoff_bound = bounds_calc::chernoff_delta(alpha, 400.0);
+        let chebyshev_bound = bounds_calc::chebyshev_delta(alpha, 400.0);
+        let simulation_bound = bounds_calc::simulation_delta(alpha, &exp);
+        
+        for (title, bound) in [("chernoff", chernoff_bound), ("chebyshev", chebyshev_bound), ("simulation", simulation_bound)] {
+            let filename = "data\\exp7_".to_string() + title + &format!("_alpha_{}.txt", alpha);
+            let mut f = File::create(filename).unwrap();
+            writeln!(f, "{}", bound).unwrap();
+        }
+      
+        println!("alpha = {}, chernoff={}", alpha, chebyshev_bound);
+        println!("alpha = {}, chebyshev={}", alpha, chernoff_bound);
+        println!("alpha = {}, simulation={}", alpha, simulation_bound);
+    }
+
+    println!("Done running experiment 7.")
+}
