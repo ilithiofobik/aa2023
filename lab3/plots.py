@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 
 def experiment8a_plot():
     x = [x for x in range(1, 32_769)]
-    for b in [4,5,6,7]:
+    #for b in [4,5,6,7,12]:
+    for b in [12]:
         plt.clf()
         plt.xlabel('n')
         plt.ylabel('estimated n value / n')
@@ -20,7 +21,8 @@ def experiment8a_plot():
 
 def experiment8b_plot():
     x = [x for x in range(1, 32_769)]
-    for (b, k) in [(5,5),(6,10),(7,20)]:
+    #for (b, k) in [(5,5),(6,10),(7,20),(12,640)]:
+    for (b, k) in [(12,640)]:
         plt.clf()
         plt.xlabel('n')
         plt.ylabel('estimated n value / n')
@@ -44,4 +46,5 @@ def experiment8b_plot():
         plt.savefig(f'data/exp8b_b_{b}_k_{k}_plot.png')
     
 if __name__ == "__main__":
+    experiment8a_plot()
     experiment8b_plot()

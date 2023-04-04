@@ -30,7 +30,7 @@ fn to_file_exp_hll(filename: &str, hash: fn(u32) -> u32, ns: &[u32], b: usize) {
 pub fn experiment8a(ns: &[u32]) {
     println!("Running experiment 8a...");
 
-    let bs = [4,5,6,7];
+    let bs = [4,5,6,7,12];
     let hashes = [hashes::sha1_hash_u32, hashes::blake2_hash_u32, hashes::my_hash_u32];
     let hashes_names = ["sha1", "blake2", "my_hash"];
 
@@ -49,7 +49,7 @@ pub fn experiment8a(ns: &[u32]) {
 pub fn experiment8b(ns: &[u32]) {
     println!("Running experiment 8b...");
 
-    let ks = [5,10,20];
+    let ks = [5,10,20,640];
     let hashes = [hashes::blake2_hash_f64];
     let hashes_names = ["blake2"];
 
