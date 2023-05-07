@@ -1,5 +1,5 @@
 /// Returns true iff adversary wins
-pub fn simulation(n: u64, q: f64, max_iter: usize) -> bool {
+pub fn simulation(n: u64, q: f64, max_iter: u64) -> bool {
     let rand = fastrand::Rng::new();
     let mut adversary = 0;
     let mut legitimate = 0;

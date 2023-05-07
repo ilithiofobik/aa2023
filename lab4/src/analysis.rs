@@ -1,18 +1,19 @@
+fn q_n_k(q: f64, n: u64, k: u64) -> f64 {
+    (q / (1.0 - q)).powi((n-k) as i32)
+}
+
 pub fn nakamoto(n: u64, q: f64) -> f64 {
     let p = 1.0 - q;
     let mut sum = 0.0;
     let mut k_fact = 1.0;
-    let qp = q / p;
-    let mut q_n_k = qp;
     let lambda = (n as f64 * q) / p;
-    let mut lam_k = lambda;
+    let mut lam_k = 1.0;
     for k in 0..n {
-        sum += lam_k * (1.0 - q_n_k) / k_fact;
+        sum += lam_k * (1.0 - q_n_k(q, n, k)) / k_fact;
         k_fact *= (k + 1) as f64;
-        q_n_k *= qp;
         lam_k *= lambda;
     }
-    1.0 - sum * (-lambda).exp()
+    1.0 - (-lambda).exp() * sum
 }
 
 pub fn grunspan(n: u64, q: f64) -> f64 {
