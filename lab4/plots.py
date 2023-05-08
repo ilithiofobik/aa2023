@@ -5,8 +5,8 @@ def experiment_sim_vs_anal():
         qs = [0.01 * x for x in range(5, 46)]
         plt.clf()
         plt.xlabel('q')
-        plt.ylabel('P(n, q)')
-        plt.title("P(n,q) for analytic methods and simulation")
+        plt.ylabel(f'P({n}, q)')
+        plt.title(f"P({n},q) for analytic methods and simulation")
         for (name, color) in [('grunspan', 'r'), ('nakamoto', 'b'), ('simulation', 'g')]: 
             filename = f"data/{name}_ppb_n_{n}.csv"
             file = open(filename, 'r')
