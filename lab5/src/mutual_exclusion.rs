@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub const NUSIZE: usize = 8;
+pub const NUSIZE: usize = 3;
 pub const NU8: u8       = NUSIZE as u8;
 
 macro_rules! is_illegal {
@@ -71,13 +71,14 @@ pub fn max_steps() -> usize {
                 new_one[0] = (new_one[0] + 1) % (NU8 + 1);
                 new_configs.insert(new_one);
             }
-            for i in 1..NUSIZE {
+            
+            (1..NUSIZE).for_each(|i| {
                 if config[i - 1] != config[i] {
                     let mut new_one = config;
                     new_one[i] = new_one[i - 1];
                     new_configs.insert(new_one);
                 }
-            }
+            });
         }
 
         configs =
