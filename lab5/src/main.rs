@@ -13,7 +13,7 @@ fn main() {
 
     // maximal independent set
     let timer = std::time::Instant::now();
-    let g = graphs::Graph::new_rand(1000, 0.1);
+    let g = graphs::Graph::new_rand(10_000, 0.1);
     let independent = maximal_independent::maximal_independent(&g);
     println!("independent set: {:?}", independent);
     println!("independent set size: {}", independent.len());
