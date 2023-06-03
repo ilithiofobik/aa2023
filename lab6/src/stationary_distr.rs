@@ -45,6 +45,10 @@ pub fn ex12() {
             }
 
             println!("{}: alpha = {}, steps = {}", name, alpha, counter);
+            println!("Vector:");
+            for num in vector.iter() {
+                print!("{:.3} ", num);
+            }            
         }
     }
 }
