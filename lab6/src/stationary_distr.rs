@@ -1,9 +1,15 @@
+use std::fs::File;
+use std::io::Write;
+
 use nalgebra::matrix;
 use nalgebra::SMatrix;
 use nalgebra::RowSVector;
 
 type Matrix6x6 = SMatrix<f64, 6, 6>;
+type Matrix5x5 = SMatrix<f64, 5, 5>;
+
 type RowSVector6 = RowSVector<f64, 6>;
+type RowSVector5 = RowSVector<f64, 5>;
 type RowSVector4 = RowSVector<f64, 4>;
 
 pub fn ex12() {
@@ -114,3 +120,41 @@ pub fn ex13() {
         println!("Epsilon = {}, t = {}", epsilon, t);
     }
 }
+
+pub fn ex14() {
+    println!("Exercise 14:");
+
+    let pg = 
+        matrix![
+            0.0, 0.5, 0.5, 0.0, 0.0;
+            0.0, 0.0, 0.0, 1.0, 0.0;
+            0.0, 1.0 / 3.0, 0.0, 1.0 / 3.0, 1.0 / 3.0;
+            1.0, 0.0, 0.0, 0.0, 0.0;
+            0.2, 0.2, 0.2, 0.2, 0.2;
+        ];
+
+    let alphas = [0.0, 0.25, 0.5, 0.75, 0.85, 1.0];
+
+    for alpha in alphas {
+        println!("Alpha = {}", alpha);
+        
+        let filename = format!("data\\convergence_alpha_{}.txt", alpha);
+        let mut file = File::create(&filename).unwrap();
+
+        let mut vector = RowSVector5::from_element(1.0 / 5.0);
+        let matrix = (1.0 - alpha) * pg + alpha * Matrix5x5::from_element(1.0 / 5.0);
+        
+        for t in 0..25 {
+            let diff = ((vector * matrix) - vector).norm();
+            vector *= matrix;
+            writeln!(file, "{};{}", t, diff).unwrap();
+        }
+        
+        println!("Vector:");
+        for num in vector.iter() {
+            print!("{:.3} ", num);
+        }    
+        println!("\n");
+    }
+}
+
