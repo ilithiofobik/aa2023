@@ -38,25 +38,20 @@ pub fn ex12() {
     let one = Matrix6x6::from_element(1.0 / 6.0);
 
     let alphas = [0.0, 0.15, 0.5, 1.0];
-    let name_pgs = [("with 2-3 edge", pg), ("without 2-3 edge", pg_ne)];
+    let name_pgs = [("tak", pg), ("nie", pg_ne)];
 
     for (name, pg) in name_pgs {
         for alpha in alphas {
             let mut vector = RowSVector6::from_element(1.0 / 6.0);
             let matrix = (1.0 - alpha) * pg + alpha * one;
-            let mut counter = 0;
 
             while ((vector * matrix) - vector).norm() > 0.0 {
                 vector *= matrix;
-                counter += 1;
             }
 
-            println!("{}: alpha = {}, steps = {}", name, alpha, counter);
-            println!("Vector:");
-            for num in vector.iter() {
-                print!("{:.3} ", num);
-            }    
-            println!("\n");        
+            println!("\\hline");
+            let vec_str = vector.iter().map(|x| format!("{:.3}", x)).collect::<Vec<_>>().join(" , ");
+            println!("{} & {} & ({})\\\\", alpha, name, vec_str);     
         }
     }
 }
@@ -93,7 +88,7 @@ pub fn ex13() {
     let vector = RowSVector4::from_element(0.25);
     let pg128 = pg.pow(128);
     let pbbs = vector * pg128;
-    println!("Pbb of being in state 3 after 32 steps: {}", pbbs[2]);
+    println!("Pbb of being in state 3 after 128 steps: {}", pbbs[2]);
 
     println!("Task d:");
     let epsilons = [0.1, 0.01, 0.001];
@@ -117,7 +112,8 @@ pub fn ex13() {
                 .fold(0.0f64, |acc, x| acc.max(x));
         }
 
-        println!("Epsilon = {}, t = {}", epsilon, t);
+        println!("\\hline");
+        println!("{} & {} \\\\", epsilon, t);
     }
 }
 
@@ -136,7 +132,7 @@ pub fn ex14() {
     let alphas = [0.0, 0.25, 0.5, 0.75, 0.85, 1.0];
 
     for alpha in alphas {
-        println!("Alpha = {}", alpha);
+        println!("alfa = {}", alpha);
         
         let filename = format!("data\\convergence_alpha_{}.txt", alpha);
         let mut file = File::create(&filename).unwrap();
@@ -144,17 +140,20 @@ pub fn ex14() {
         let mut vector = RowSVector5::from_element(1.0 / 5.0);
         let matrix = (1.0 - alpha) * pg + alpha * Matrix5x5::from_element(1.0 / 5.0);
         
-        for t in 0..25 {
+        for t in 1..=25 {
             let diff = ((vector * matrix) - vector).norm();
             vector *= matrix;
+            println!("\\hline");
+            let vec_str = vector.iter().map(|x| format!("{:.3}", x)).collect::<Vec<_>>().join(" , ");
+            println!("{} & ({})\\\\", t, vec_str);     
             writeln!(file, "{};{}", t, diff).unwrap();
         }
         
-        println!("Vector:");
-        for num in vector.iter() {
-            print!("{:.3} ", num);
-        }    
-        println!("\n");
+        println!("Ranking:");
+        let mut ranking: Vec<(usize, f64)> = vector.iter().enumerate().map(|(i, &x)| (i, x) ).collect();
+        ranking.sort_by(|(_, a), (_, b)| b.partial_cmp(a).unwrap());
+        let rnk_str = ranking.iter().map(|&(i, _)| format!("{:.3}", i)).collect::<Vec<_>>().join(" , ");
+        println!("Ranking: $$({})$$", rnk_str);
     }
 }
 
