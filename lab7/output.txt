@@ -62,3 +62,5 @@ n = 27, real_count = 100663296, theoretical_count = 100663296
 n = 28, real_count = 201326592, theoretical_count = 201326592
 n = 29, real_count = 402653184, theoretical_count = 402653184
 n = 30, real_count = 805306368, theoretical_count = 805306368
+ex16 - randomized
+rand_count for n = 10: 767
